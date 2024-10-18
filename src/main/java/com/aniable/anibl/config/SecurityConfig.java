@@ -19,21 +19,27 @@ package com.aniable.anibl.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.cors(CorsConfigurer::disable)
+		httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 					.csrf(CsrfConfigurer::disable)
 					.formLogin(FormLoginConfigurer::disable)
 					.httpBasic(HttpBasicConfigurer::disable)
@@ -41,5 +47,18 @@ public class SecurityConfig {
 					.authorizeHttpRequests(requests -> requests.anyRequest().permitAll())
 					.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		return httpSecurity.build();
+	}
+
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		var configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(
+			List.of("http://localhost:5173")); // TODO 2024-10-18, 17:32 Change to dev front-end or prod hostname
+		configuration.setAllowedMethods(Arrays.stream(HttpMethod.values()).map(HttpMethod::name).toList());
+		configuration.setAllowCredentials(true);
+		configuration.setAllowedHeaders(List.of("Authorization"));
+		var source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
 	}
 }
