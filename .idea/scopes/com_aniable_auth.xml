@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="com.aniable.auth" pattern="src[anibl.main]:com.aniable.anibl..*" />
+</component>
