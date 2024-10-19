@@ -58,6 +58,9 @@ public class User implements OAuth2User {
 	@Column(nullable = false)
 	private String name;
 
+	@Column(nullable = false)
+	private String email;
+
 	@Column(nullable = false, updatable = false)
 	@CreatedDate
 	private ZonedDateTime created;
