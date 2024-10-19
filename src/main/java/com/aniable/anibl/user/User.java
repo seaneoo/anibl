@@ -22,8 +22,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"provider", "provider_id"})})
@@ -44,4 +47,12 @@ public class User {
 
 	@Column(nullable = false)
 	private String providerId;
+
+	@Column(nullable = false, updatable = false)
+	@CreatedDate
+	private ZonedDateTime created;
+
+	@Column(nullable = false)
+	@LastModifiedDate
+	private ZonedDateTime lastModified;
 }
