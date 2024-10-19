@@ -79,7 +79,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		try {
 			response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, GitHubUserEmails[].class);
 		} catch (Exception e) {
-			throw new RuntimeException("Could you fetch user emails from GitHub", e);
+			throw new RuntimeException("Could not fetch user emails from GitHub", e);
 		}
 
 		if (!response.getStatusCode().is2xxSuccessful()) {
