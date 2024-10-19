@@ -19,11 +19,11 @@ package com.aniable.anibl.oauth2.userinfo;
 
 import com.aniable.anibl.oauth2.OAuth2Provider;
 
-import java.util.Map;
+import java.util.HashMap;
 
 public class GitHubOAuth2UserInfo extends OAuth2UserInfo {
 
-	public GitHubOAuth2UserInfo(Map<String, Object> attributes) {
+	public GitHubOAuth2UserInfo(HashMap<String, Object> attributes) {
 		super(attributes);
 	}
 
@@ -40,5 +40,10 @@ public class GitHubOAuth2UserInfo extends OAuth2UserInfo {
 	@Override
 	public String getName() {
 		return getAttributes().get("login").toString();
+	}
+
+	@Override
+	public String getEmail() {
+		return getAttributes().get("verified_primary_email").toString();
 	}
 }

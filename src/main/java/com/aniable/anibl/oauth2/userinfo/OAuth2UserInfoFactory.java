@@ -20,18 +20,20 @@ package com.aniable.anibl.oauth2.userinfo;
 import com.aniable.anibl.oauth2.OAuth2Provider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
 
 @Component
 @Slf4j
 public class OAuth2UserInfoFactory {
 
-	public static OAuth2UserInfo getOAuth2UserInfo(OAuth2User oAuth2User, OAuth2UserRequest oAuth2UserRequest) {
+	public static OAuth2UserInfo getOAuth2UserInfo(OAuth2UserRequest oAuth2UserRequest,
+												   HashMap<String, Object> attributes) {
 		var oAuth2Provider = OAuth2Provider.fromClientRegistration(oAuth2UserRequest.getClientRegistration());
 		switch (oAuth2Provider) {
 			case GITHUB -> {
-				return new GitHubOAuth2UserInfo(oAuth2User.getAttributes());
+				return new GitHubOAuth2UserInfo(attributes);
 			}
 			case null, default -> throw new RuntimeException(
 				"Unsupported OAuth2 provider: " + oAuth2UserRequest.getClientRegistration().getRegistrationId());

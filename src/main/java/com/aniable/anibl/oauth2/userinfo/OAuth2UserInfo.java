@@ -21,17 +21,19 @@ import com.aniable.anibl.oauth2.OAuth2Provider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Map;
+import java.util.HashMap;
 
 @Getter
 @AllArgsConstructor
 public abstract class OAuth2UserInfo {
 
-	private Map<String, Object> attributes;
+	private HashMap<String, Object> attributes;
 
 	public abstract OAuth2Provider getProvider();
 
 	public abstract String getId();
 
 	public abstract String getName();
+
+	public abstract String getEmail();
 }
