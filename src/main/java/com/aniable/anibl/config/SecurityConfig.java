@@ -17,10 +17,10 @@
 
 package com.aniable.anibl.config;
 
+import com.aniable.anibl.oauth2.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
@@ -37,13 +37,20 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
+	final CustomOAuth2UserService customOAuth2UserService;
+
+	public SecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
+		this.customOAuth2UserService = customOAuth2UserService;
+	}
+
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 					.csrf(CsrfConfigurer::disable)
 					.formLogin(FormLoginConfigurer::disable)
 					.httpBasic(HttpBasicConfigurer::disable)
-					.oauth2Login(Customizer.withDefaults())
+					.oauth2Login(oauth -> oauth.userInfoEndpoint(
+						userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService)))
 					.authorizeHttpRequests(requests -> requests.anyRequest().permitAll())
 					.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		return httpSecurity.build();
