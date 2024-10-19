@@ -15,17 +15,18 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.aniable.anibl.user;
+package com.aniable.anibl.oauth2;
 
-import com.aniable.anibl.oauth2.OAuth2Provider;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
 
-import java.util.Optional;
-import java.util.UUID;
+public enum OAuth2Provider {
+	GITHUB;
 
-@Repository
-public interface UserRepository extends CrudRepository<User, UUID> {
-
-	Optional<User> findByProviderAndProviderId(OAuth2Provider provider, String providerId);
+	public static OAuth2Provider fromClientRegistration(ClientRegistration clientRegistration) {
+		try {
+			return valueOf(clientRegistration.getRegistrationId().toUpperCase());
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }

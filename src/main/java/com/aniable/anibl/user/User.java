@@ -17,6 +17,7 @@
 
 package com.aniable.anibl.user;
 
+import com.aniable.anibl.oauth2.OAuth2Provider;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,7 +44,8 @@ public class User {
 	private UUID id;
 
 	@Column(nullable = false)
-	private String provider;
+	@Enumerated(EnumType.STRING)
+	private OAuth2Provider provider;
 
 	@Column(nullable = false)
 	private String providerId;
