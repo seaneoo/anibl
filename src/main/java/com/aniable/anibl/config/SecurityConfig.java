@@ -17,6 +17,7 @@
 
 package com.aniable.anibl.config;
 
+import com.aniable.anibl.jwt.JwtFilter;
 import com.aniable.anibl.oauth2.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,7 @@ import org.springframework.security.config.annotation.web.configurers.FormLoginC
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -39,8 +41,11 @@ public class SecurityConfig {
 
 	final CustomOAuth2UserService customOAuth2UserService;
 
-	public SecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
+	final JwtFilter jwtFilter;
+
+	public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, JwtFilter jwtFilter) {
 		this.customOAuth2UserService = customOAuth2UserService;
+		this.jwtFilter = jwtFilter;
 	}
 
 	@Bean
@@ -51,8 +56,9 @@ public class SecurityConfig {
 					.httpBasic(HttpBasicConfigurer::disable)
 					.oauth2Login(oauth -> oauth.userInfoEndpoint(
 						userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService)))
-					.authorizeHttpRequests(requests -> requests.anyRequest().permitAll())
-					.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+					.authorizeHttpRequests(requests -> requests.anyRequest().authenticated())
+					.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+					.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 		return httpSecurity.build();
 	}
 
