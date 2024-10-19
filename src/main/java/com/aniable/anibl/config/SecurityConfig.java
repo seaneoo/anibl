@@ -19,6 +19,7 @@ package com.aniable.anibl.config;
 
 import com.aniable.anibl.jwt.JwtFilter;
 import com.aniable.anibl.oauth2.CustomOAuth2UserService;
+import com.aniable.anibl.oauth2.OAuth2SuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -39,11 +40,16 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
+	final OAuth2SuccessHandler oAuth2SuccessHandler;
+
 	final CustomOAuth2UserService customOAuth2UserService;
 
 	final JwtFilter jwtFilter;
 
-	public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, JwtFilter jwtFilter) {
+	public SecurityConfig(OAuth2SuccessHandler oAuth2SuccessHandler,
+						  CustomOAuth2UserService customOAuth2UserService,
+						  JwtFilter jwtFilter) {
+		this.oAuth2SuccessHandler = oAuth2SuccessHandler;
 		this.customOAuth2UserService = customOAuth2UserService;
 		this.jwtFilter = jwtFilter;
 	}
@@ -54,8 +60,10 @@ public class SecurityConfig {
 					.csrf(CsrfConfigurer::disable)
 					.formLogin(FormLoginConfigurer::disable)
 					.httpBasic(HttpBasicConfigurer::disable)
-					.oauth2Login(oauth -> oauth.userInfoEndpoint(
-						userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService)))
+					.oauth2Login(oauth -> oauth.successHandler(oAuth2SuccessHandler)
+											   .userInfoEndpoint(
+												   userInfoEndpointConfig -> userInfoEndpointConfig.userService(
+													   customOAuth2UserService)))
 					.authorizeHttpRequests(requests -> requests.anyRequest().authenticated())
 					.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 					.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
