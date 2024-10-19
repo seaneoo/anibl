@@ -1,5 +1,7 @@
 # Terms of Service
 
+*Last Modified & Effective on October 19, 2024.*
+
 These Terms of Service ("Terms") govern your access to and use of the Anibl URL shortening service, including our
 website, APIs, and any related tools or services (collectively, the "Service"). Please read these Terms carefully before
 using the Service. By accessing or using the Service, you agree to be bound by these Terms. If you disagree with any
