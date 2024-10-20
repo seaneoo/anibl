@@ -49,10 +49,6 @@ public class JwtService {
 		return extractClaim(token, Claims::getSubject);
 	}
 
-	public Date extractExpiration(String token) {
-		return extractClaim(token, Claims::getExpiration);
-	}
-
 	public String build(User user) {
 		var zonedNow = DateTimeUtils.now();
 		var iat = Date.from(zonedNow.toInstant());
