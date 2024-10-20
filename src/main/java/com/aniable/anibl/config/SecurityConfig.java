@@ -29,6 +29,7 @@ import org.springframework.security.config.annotation.web.configurers.FormLoginC
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -65,6 +66,8 @@ public class SecurityConfig {
 												   userInfoEndpointConfig -> userInfoEndpointConfig.userService(
 													   customOAuth2UserService)))
 					.authorizeHttpRequests(requests -> requests.anyRequest().authenticated())
+					.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(
+						new Http403ForbiddenEntryPoint()))
 					.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 					.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 		return httpSecurity.build();
