@@ -19,6 +19,7 @@ package com.aniable.anibl.jwt;
 
 import com.aniable.anibl.user.User;
 import com.aniable.anibl.user.UserRepository;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,22 +61,23 @@ public class JwtFilter extends OncePerRequestFilter {
 		}
 
 		var token = header.substring(SCHEME.length());
-		if (token.isBlank()) throw new RuntimeException("No authorization token found");
-
-		// TODO 2024-10-19, 15:23 Check if token is expired
+		if (token.isBlank()) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 
 		var subject = jwtService.extractSubject(token);
-		if (subject == null || subject.isBlank()) throw new RuntimeException("No subject found");
+		if (subject == null || subject.isBlank()) throw new JwtException("Subject claim is not present");
 
 		UUID userId;
 		try {
 			userId = UUID.fromString(subject);
 		} catch (Exception e) {
-			throw new RuntimeException("Invalid subject");
+			throw new JwtException("Could not parse subject into user ID");
 		}
 
 		var user = userRepository.findById(userId);
-		if (user.isEmpty()) throw new RuntimeException("User not found");
+		if (user.isEmpty()) throw new JwtException("Could not find matching user for subject");
 
 		authenticate(user.get(), request);
 		filterChain.doFilter(request, response);
