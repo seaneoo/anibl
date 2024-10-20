@@ -65,7 +65,8 @@ public class SecurityConfig {
 											   .userInfoEndpoint(
 												   userInfoEndpointConfig -> userInfoEndpointConfig.userService(
 													   customOAuth2UserService)))
-					.authorizeHttpRequests(requests -> requests.anyRequest().authenticated())
+					.authorizeHttpRequests(
+						requests -> requests.requestMatchers("/error/**").permitAll().anyRequest().authenticated())
 					.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(
 						new Http403ForbiddenEntryPoint()))
 					.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
